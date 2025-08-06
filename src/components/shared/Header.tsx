@@ -6,7 +6,7 @@ const Header = () => {
     `hover:text-white transition-colors ${isActive ? "text-white" : "text-gray-400"}`;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-transparent">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link to="/" className="flex items-center gap-2 text-lg font-semibold text-white -ml-2">
           <img src="/logo.png" alt="ZHIZHU3D Logo" className="h-8 w-8" />
