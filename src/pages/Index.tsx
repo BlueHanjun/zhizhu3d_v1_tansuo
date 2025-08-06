@@ -5,13 +5,15 @@ const Index = () => {
   return (
     <div className="w-full text-white">
       {/* Hero Section */}
-      <section className="relative flex h-[70vh] items-center justify-center text-center">
+      <section className="relative flex h-[70vh] items-center justify-center">
         <div className="absolute inset-0 bg-gradient-to-b from-red-950/60 via-black to-black"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-900/20 to-transparent"></div>
-        <div className="relative z-10 flex flex-col items-center">
-          <img src="/zhizhu-logo-large.svg" alt="ZHIZHU3D Logo" className="h-24 w-24 mb-4" />
-          <h1 className="text-5xl font-bold tracking-tighter">ZHIZHU3D</h1>
-          <p className="mt-4 text-lg text-gray-300">致力于空间智能技术探索</p>
+        <div className="relative z-10 flex flex-row items-center gap-8">
+          <img src="/zhizhu-logo-large.svg" alt="ZHIZHU3D Logo" className="h-24 w-24" />
+          <div className="text-left">
+            <h1 className="text-5xl font-bold tracking-tighter">ZHIZHU3D</h1>
+            <p className="mt-4 text-lg text-gray-300">致力于空间智能技术探索</p>
+          </div>
         </div>
       </section>
 
