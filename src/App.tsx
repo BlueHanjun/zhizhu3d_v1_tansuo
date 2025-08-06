@@ -10,6 +10,7 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 
 import Index from "@/pages/Index";
 import DocsPage from "@/pages/DocsPage";
+import ContactPage from "@/pages/ContactPage";
 import UsagePage from "@/pages/dashboard/UsagePage";
 import ApiKeysPage from "@/pages/dashboard/ApiKeysPage";
 import BillingPage from "@/pages/dashboard/BillingPage";
@@ -27,6 +28,7 @@ const App = () => (
           <Route element={<MainLayout />}>
             <Route path="/" element={<Index />} />
             <Route path="/docs" element={<DocsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
           </Route>
           <Route path="/dashboard" element={<DashboardLayout />}>
             <Route index element={<Navigate to="/dashboard/usage" replace />} />

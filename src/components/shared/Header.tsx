@@ -16,6 +16,7 @@ const Header = () => {
           <NavLink to="/" className={navLinkClass} end>首页</NavLink>
           <NavLink to="/dashboard" className={navLinkClass}>开放平台</NavLink>
           <NavLink to="/docs" className={navLinkClass}>文档中心</NavLink>
+          <NavLink to="/contact" className={navLinkClass}>联系我们</NavLink>
         </nav>
         <div className="flex items-center gap-4">
           <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-full px-6">登录</Button>
