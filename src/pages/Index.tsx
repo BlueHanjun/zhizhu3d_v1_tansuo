@@ -5,7 +5,7 @@ const Index = () => {
   return (
     <div className="w-full text-white">
       {/* Hero Section */}
-      <section className="relative flex h-[50vh] items-center justify-center">
+      <section className="relative flex h-[60vh] items-center justify-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/shouyeditu.png')" }}
