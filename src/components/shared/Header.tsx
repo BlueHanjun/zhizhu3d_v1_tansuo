@@ -1,9 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "../../contexts/AuthContext";
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `hover:text-white transition-colors ${isActive ? "text-white" : "text-gray-400"}`;
 
@@ -22,15 +20,7 @@ const Header = () => {
             <NavLink to="/contact" className={navLinkClass}>联系我们</NavLink>
           </nav>
           <div className="flex items-center gap-4">
-            {isAuthenticated ? (
-              <Button onClick={logout} variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-full px-6">
-                退出登录
-              </Button>
-            ) : (
-              <Button asChild variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-full px-6">
-                <Link to="/login">登录</Link>
-              </Button>
-            )}
+            <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-full px-6">登录</Button>
           </div>
         </div>
       </div>

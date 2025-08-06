@@ -1,10 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAuth } from "../../contexts/AuthContext";
 
 const ProfilePage = () => {
-  const { logout } = useAuth();
-
   return (
     <div className="space-y-8 text-white max-w-3xl">
       <div>
@@ -28,7 +25,7 @@ const ProfilePage = () => {
         </CardContent>
       </Card>
 
-      <Button onClick={logout} variant="link" className="p-0 text-red-500 hover:text-red-400">退出登录</Button>
+      <Button variant="link" className="p-0 text-red-500 hover:text-red-400">退出登录</Button>
     </div>
   );
 };
