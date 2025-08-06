@@ -10,7 +10,7 @@ const Index = () => {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/shouyeditu.png')" }}
         ></div>
-        <div className="absolute inset-0 bg-black/60"></div>
+        
         <div className="relative z-10 flex flex-row items-center gap-8">
           <img src="/zhizhu-logo-large.svg" alt="ZHIZHU3D Logo" className="h-24 w-24" />
           <div className="text-left">
