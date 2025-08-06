@@ -1,9 +1,6 @@
 import { Link, NavLink } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
-  const { isAuthenticated } = useAuth();
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     `hover:text-white transition-colors ${isActive ? "text-white" : "text-gray-400"}`;
 
@@ -21,17 +18,6 @@ const Header = () => {
             <NavLink to="/docs" className={navLinkClass}>文档中心</NavLink>
             <NavLink to="/contact" className={navLinkClass}>联系我们</NavLink>
           </nav>
-          <div className="flex items-center gap-4">
-            {isAuthenticated ? (
-               <Button asChild variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-full px-6">
-                <Link to="/dashboard">控制台</Link>
-              </Button>
-            ) : (
-              <Button asChild variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-full px-6">
-                <Link to="/login">登录</Link>
-              </Button>
-            )}
-          </div>
         </div>
       </div>
     </header>
