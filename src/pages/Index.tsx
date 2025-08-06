@@ -12,7 +12,7 @@ const Index = () => {
         ></div>
         
         <div className="relative z-10 flex flex-row items-center gap-8">
-          <img src="/logo.png" alt="ZHIZHU3D Logo" className="h-24 w-24" />
+          <img src="/logo.png" alt="ZHIZHU3D Logo" className="h-32 w-32" />
           <div className="text-left">
             <h1 className="text-5xl font-bold tracking-tighter">ZHIZHU3D</h1>
             <p className="mt-4 text-lg text-gray-300">致力于空间智能技术探索</p>
