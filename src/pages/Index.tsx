@@ -50,7 +50,8 @@ const Index = () => {
 };
 
 const ProductCard = ({ title, description, actionText }: { title: string; description: string; actionText: string }) => (
-  <div className="flex flex-col items-start border-l-2 border-zinc-700 pl-6">
+  <div className="relative flex flex-col items-start pl-6">
+    <div className="absolute left-0 top-1 h-10 w-0.5 bg-zinc-700" />
     <h3 className="mb-3 text-xl font-semibold text-white relative before:content-[''] before:absolute before:w-2 before:h-px before:bg-white before:-left-7 before:top-1/2">
       {title}
     </h3>
