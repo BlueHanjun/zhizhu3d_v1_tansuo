@@ -4,6 +4,8 @@ import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import WechatPayIcon from "@/components/icons/WechatPayIcon";
+import AlipayIcon from "@/components/icons/AlipayIcon";
 
 const bills = [
   {
@@ -43,10 +45,12 @@ const BillingPage = () => {
             <RadioGroup defaultValue="wechat" className="space-y-3">
               <Label htmlFor="wechat" className="flex items-center p-4 rounded-md border border-zinc-700 bg-[#2C2C2C] has-[:checked]:border-white cursor-pointer transition-colors">
                 <RadioGroupItem value="wechat" id="wechat" className="mr-4" />
+                <WechatPayIcon className="h-6 w-6 mr-3" />
                 微信支付
               </Label>
               <Label htmlFor="alipay" className="flex items-center p-4 rounded-md border border-zinc-700 bg-[#2C2C2C] has-[:checked]:border-white cursor-pointer transition-colors">
                 <RadioGroupItem value="alipay" id="alipay" className="mr-4" />
+                <AlipayIcon className="h-6 w-6 mr-3" />
                 支付宝
               </Label>
             </RadioGroup>
