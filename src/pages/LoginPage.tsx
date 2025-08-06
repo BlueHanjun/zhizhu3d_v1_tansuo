@@ -17,7 +17,7 @@ const LoginPage = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // 在实际应用中，这里会有表单验证和API调用
+    // 在实际应用中，这里会验证手机号和验证码
     login();
     navigate("/dashboard", { replace: true });
   };
@@ -33,23 +33,29 @@ const LoginPage = () => {
           <form onSubmit={handleLogin}>
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="email">邮箱</Label>
+                <Label htmlFor="phone">手机号</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  id="phone"
+                  type="tel"
+                  placeholder="请输入您的手机号"
                   required
                   className="bg-[#2C2C2C] border-zinc-700"
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">密码</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  className="bg-[#2C2C2C] border-zinc-700"
-                />
+                <Label htmlFor="code">验证码</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="code"
+                    type="text"
+                    placeholder="请输入验证码"
+                    required
+                    className="bg-[#2C2C2C] border-zinc-700"
+                  />
+                  <Button type="button" variant="outline" className="bg-[#2C2C2C] border-zinc-700 hover:bg-zinc-700 whitespace-nowrap">
+                    获取验证码
+                  </Button>
+                </div>
               </div>
               <Button type="submit" className="w-full bg-white text-black hover:bg-gray-200">
                 登录
