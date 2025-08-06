@@ -5,7 +5,7 @@ const Index = () => {
   return (
     <div className="w-full text-white">
       {/* Hero Section */}
-      <section className="relative flex h-[70vh] items-center justify-center">
+      <section className="relative flex h-[50vh] items-center justify-center">
         <div className="absolute inset-0 bg-gradient-to-b from-red-950/60 via-black to-black"></div>
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-900/20 to-transparent"></div>
         <div className="relative z-10 flex flex-row items-center gap-8">
