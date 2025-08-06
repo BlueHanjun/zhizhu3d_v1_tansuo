@@ -15,6 +15,9 @@ import UsagePage from "@/pages/dashboard/UsagePage";
 import ApiKeysPage from "@/pages/dashboard/ApiKeysPage";
 import BillingPage from "@/pages/dashboard/BillingPage";
 import ProfilePage from "@/pages/dashboard/ProfilePage";
+import LoginPage from "@/pages/LoginPage";
+import { AuthProvider } from "@/contexts/AuthContext";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -23,23 +26,28 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/docs" element={<DocsPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-          </Route>
-          <Route path="/dashboard" element={<DashboardLayout />}>
-            <Route index element={<Navigate to="/dashboard/usage" replace />} />
-            <Route path="usage" element={<UsagePage />} />
-            <Route path="api-keys" element={<ApiKeysPage />} />
-            <Route path="billing" element={<BillingPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Index />} />
+              <Route path="/docs" element={<DocsPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+            </Route>
+            <Route path="/login" element={<LoginPage />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/dashboard" element={<DashboardLayout />}>
+                <Route index element={<Navigate to="/dashboard/usage" replace />} />
+                <Route path="usage" element={<UsagePage />} />
+                <Route path="api-keys" element={<ApiKeysPage />} />
+                <Route path="billing" element={<BillingPage />} />
+                <Route path="profile" element={<ProfilePage />} />
+              </Route>
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
