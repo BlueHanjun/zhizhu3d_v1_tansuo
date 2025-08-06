@@ -12,14 +12,16 @@ const Header = () => {
           <img src="/zhizhu-logo.svg" alt="ZHIZHU3D Logo" className="h-6 w-6" />
           <span>ZHIZHU3D</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-          <NavLink to="/" className={navLinkClass} end>首页</NavLink>
-          <NavLink to="/dashboard" className={navLinkClass}>开放平台</NavLink>
-          <NavLink to="/docs" className={navLinkClass}>文档中心</NavLink>
-          <NavLink to="/contact" className={navLinkClass}>联系我们</NavLink>
-        </nav>
-        <div className="flex items-center gap-4">
-          <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-full px-6">登录</Button>
+        <div className="flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+            <NavLink to="/" className={navLinkClass} end>首页</NavLink>
+            <NavLink to="/dashboard" className={navLinkClass}>开放平台</NavLink>
+            <NavLink to="/docs" className={navLinkClass}>文档中心</NavLink>
+            <NavLink to="/contact" className={navLinkClass}>联系我们</NavLink>
+          </nav>
+          <div className="flex items-center gap-4">
+            <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-full px-6">登录</Button>
+          </div>
         </div>
       </div>
     </header>
