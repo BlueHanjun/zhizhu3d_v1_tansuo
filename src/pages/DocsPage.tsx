@@ -1,11 +1,23 @@
+import { useState } from "react";
+
 const DocsPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
     <div className="container mx-auto flex h-screen flex-col items-center justify-center p-4 pt-24 pb-12 md:p-6 md:pt-24 md:pb-12">
-      <div className="w-full h-full bg-zinc-900 flex items-center justify-center rounded-lg">
+      <div className="w-full h-full bg-zinc-900 flex items-center justify-center rounded-lg relative">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-100"></div>
+          </div>
+        )}
         <iframe
-          src="https://fxnhbt6c1n.feishu.cn/wiki/space/7534718019357032452?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home" // 这是一个占位符网址，您可以替换成您的文档地址
+          src="https://fxnhbt6c1n.feishu.cn/wiki/space/7534718019357032452?ccm_open_type=lark_wiki_spaceLink&open_tab_from=wiki_home"
           title="Documentation"
-          className="h-full w-full border-0 rounded-lg"
+          className={`h-full w-full border-0 rounded-lg transition-opacity duration-300 ${
+            isLoading ? "opacity-0" : "opacity-100"
+          }`}
+          onLoad={() => setIsLoading(false)}
         />
       </div>
     </div>
