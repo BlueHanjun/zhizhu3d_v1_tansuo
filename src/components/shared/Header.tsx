@@ -9,7 +9,7 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-sm">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link to="/" className="flex items-center gap-2 text-lg font-semibold text-white -ml-2">
-          <img src="/zhizhu-logo.svg" alt="ZHIZHU3D Logo" className="h-6 w-6" />
+          <img src="/logo.png" alt="ZHIZHU3D Logo" className="h-8 w-8" />
           <span>ZHIZHU3D</span>
         </Link>
         <div className="flex items-center gap-6">
