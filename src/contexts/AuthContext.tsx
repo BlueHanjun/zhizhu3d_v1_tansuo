@@ -1,64 +1,27 @@
-import React, { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
-import { api } from '@/lib/api';
-import { showSuccess } from '@/utils/toast';
-
-interface User {
-  id: string;
-  phone_number: string;
-  real_name: string | null;
-  id_number: string | null;
-  balance: number;
-  created_at: string;
-}
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  user: User | null;
-  login: (token: string) => void;
+  login: () => void;
   logout: () => void;
-  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem('authToken'));
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  const fetchUser = useCallback(async () => {
-    if (token) {
-      try {
-        const userData = await api.get<User>('/api/user/me');
-        setUser(userData);
-      } catch (error) {
-        console.error('Failed to fetch user', error);
-        setToken(null);
-        localStorage.removeItem('authToken');
-        setUser(null);
-      }
-    }
-    setIsLoading(false);
-  }, [token]);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
 
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    localStorage.setItem('isAuthenticated', String(isAuthenticated));
+  }, [isAuthenticated]);
 
-  const login = (newToken: string) => {
-    localStorage.setItem('authToken', newToken);
-    setToken(newToken);
-  };
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    setToken(null);
-    setUser(null);
-    showSuccess("您已成功退出登录。");
-  };
+  const login = () => setIsAuthenticated(true);
+  const logout = () => setIsAuthenticated(false);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated: !!token && !!user, user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
