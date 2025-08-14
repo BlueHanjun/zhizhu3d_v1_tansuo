@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,16 +11,50 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { api } from "@/lib/api";
+import { showSuccess, showError, showLoading, dismissToast } from "@/utils/toast";
 
 const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [code, setCode] = useState("");
+  const [isSendingCode, setIsSendingCode] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSendCode = async () => {
+    if (!/^\d{11}$/.test(phoneNumber)) {
+      showError("请输入有效的11位手机号码。");
+      return;
+    }
+    setIsSendingCode(true);
+    const toastId = showLoading("正在发送验证码...");
+    try {
+      await api.post('/api/auth/send-code', { phoneNumber });
+      dismissToast(toastId);
+      showSuccess("验证码已发送，请注意查收。");
+    } catch (error) {
+      dismissToast(toastId);
+    } finally {
+      setIsSendingCode(false);
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 在实际应用中，这里会验证手机号和验证码
-    login();
-    navigate("/dashboard", { replace: true });
+    if (!phoneNumber || !code) {
+      showError("手机号和验证码不能为空。");
+      return;
+    }
+    const toastId = showLoading("正在登录...");
+    try {
+      const response = await api.post<{ token: string }, { phoneNumber: string, code: string }>('/api/auth/login', { phoneNumber, code });
+      dismissToast(toastId);
+      showSuccess("登录成功！");
+      login(response.token);
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      dismissToast(toastId);
+    }
   };
 
   return (
@@ -40,6 +75,8 @@ const LoginPage = () => {
                   placeholder="请输入您的手机号"
                   required
                   className="bg-[#2C2C2C] border-zinc-700"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
@@ -51,9 +88,11 @@ const LoginPage = () => {
                     placeholder="请输入验证码"
                     required
                     className="bg-[#2C2C2C] border-zinc-700"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
                   />
-                  <Button type="button" variant="outline" className="bg-[#2C2C2C] border-zinc-700 hover:bg-zinc-700 whitespace-nowrap">
-                    获取验证码
+                  <Button type="button" variant="outline" className="bg-[#2C2C2C] border-zinc-700 hover:bg-zinc-700 whitespace-nowrap" onClick={handleSendCode} disabled={isSendingCode}>
+                    {isSendingCode ? "发送中..." : "获取验证码"}
                   </Button>
                 </div>
               </div>
