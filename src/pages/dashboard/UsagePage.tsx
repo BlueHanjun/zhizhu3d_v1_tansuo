@@ -1,30 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import { useAuth } from "@/contexts/AuthContext";
-import { api } from "@/lib/api";
-import { Skeleton } from "@/components/ui/skeleton";
-import { format } from "date-fns";
-import { useNavigate } from "react-router-dom";
 
-interface UsageRecord {
-  date: string; 
-  cost: number;
-}
+const usageData = [
+  { name: "8-1", uv: 4000 }, { name: "", uv: 2000 }, { name: "", uv: 3200 }, { name: "", uv: 5000 }, { name: "", uv: 800 }, { name: "", uv: 1800 }, { name: "8-15", uv: 4200 }, { name: "", uv: 1000 }, { name: "", uv: 2000 }, { name: "", uv: 3000 }, { name: "", uv: 4000 }, { name: "", uv: 2500 }, { name: "", uv: 3500 }, { name: "8-31", uv: 2000 },
+];
 
-const fetchUsageSummary = async (): Promise<UsageRecord[]> => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = (today.getMonth() + 1).toString().padStart(2, '0');
-  return api.get<UsageRecord[]>(`/api/usage/summary?period=monthly&date=${year}-${month}`);
-};
-
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-black/50 p-2 border border-zinc-700 rounded-md">
-        <p className="text-white">{`¥ ${payload[0].value.toFixed(2)}`}</p>
+        <p className="text-white">{`${payload[0].value} CNY`}</p>
       </div>
     );
   }
@@ -32,18 +18,6 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 const UsagePage = () => {
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  const { data: usageData, isLoading } = useQuery({
-    queryKey: ['usageSummary'],
-    queryFn: fetchUsageSummary,
-  });
-
-  const formattedData = usageData?.map(item => ({
-    name: format(new Date(item.date), "d"),
-    cost: item.cost,
-  }));
-
   return (
     <div className="space-y-8 text-white">
       <div>
@@ -56,12 +30,8 @@ const UsagePage = () => {
           <CardTitle className="text-sm font-medium text-gray-300">充值余额</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          {user ? (
-            <div className="text-3xl font-bold">¥ {user.balance.toFixed(2)}</div>
-          ) : (
-            <Skeleton className="h-9 w-32" />
-          )}
-          <Button onClick={() => navigate('/dashboard/billing')} variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-md">去充值</Button>
+          <div className="text-3xl font-bold">¥ 100.00</div>
+          <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-md">去充值</Button>
         </CardContent>
       </Card>
 
@@ -69,27 +39,19 @@ const UsagePage = () => {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle className="text-lg">用量明细</CardTitle>
-            <Button variant="outline" className="bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 rounded-md">
-              {format(new Date(), "yyyy-MM")}
-            </Button>
+            <Button variant="outline" className="bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 rounded-md">2025-8月</Button>
           </div>
         </CardHeader>
         <CardContent className="h-[350px] pt-4">
-          {isLoading ? (
-            <div className="w-full h-full flex items-center justify-center">
-              <Skeleton className="w-full h-full" />
-            </div>
-          ) : (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={formattedData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" vertical={false} />
-                <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `¥${value}`} hide />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(136, 132, 216, 0.1)' }} />
-                <Bar dataKey="cost" fill="#E2E8F0" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={usageData} barGap={-10}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" vertical={false} />
+              <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+              <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} hide />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(136, 132, 216, 0.1)' }} />
+              <Bar dataKey="uv" fill="#E2E8F0" radius={[4, 4, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </CardContent>
       </Card>
     </div>
