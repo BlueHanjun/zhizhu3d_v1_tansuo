@@ -1,10 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-
-const usageData = [
-  { name: "8-1", uv: 4000 }, { name: "", uv: 2000 }, { name: "", uv: 3200 }, { name: "", uv: 5000 }, { name: "", uv: 800 }, { name: "", uv: 1800 }, { name: "8-15", uv: 4200 }, { name: "", uv: 1000 }, { name: "", uv: 2000 }, { name: "", uv: 3000 }, { name: "", uv: 4000 }, { name: "", uv: 2500 }, { name: "", uv: 3500 }, { name: "8-31", uv: 2000 },
-];
+import { useUsage } from "@/hooks/useUsage";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -18,6 +15,36 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const UsagePage = () => {
+  const { usageData, balance, loading, error } = useUsage();
+
+  if (loading) {
+    return (
+      <div className="space-y-8 text-white">
+        <div>
+          <h1 className="text-3xl font-bold">用量信息</h1>
+          <p className="text-gray-400 mt-2">数据可能有1分钟延迟。</p>
+        </div>
+        <div className="flex justify-center items-center h-32">
+          加载中...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-8 text-white">
+        <div>
+          <h1 className="text-3xl font-bold">用量信息</h1>
+          <p className="text-gray-400 mt-2">数据可能有1分钟延迟。</p>
+        </div>
+        <div className="flex justify-center items-center h-32 text-red-500">
+          {error}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 text-white">
       <div>
@@ -30,7 +57,7 @@ const UsagePage = () => {
           <CardTitle className="text-sm font-medium text-gray-300">充值余额</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <div className="text-3xl font-bold">¥ 100.00</div>
+          <div className="text-3xl font-bold">¥ {balance.amount.toFixed(2)}</div>
           <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-md">去充值</Button>
         </CardContent>
       </Card>

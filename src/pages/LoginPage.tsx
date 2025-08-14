@@ -10,16 +10,35 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { showError, showSuccess } from "@/utils/toast";
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
+  const [phone, setPhone] = useState("");
+  const [code, setCode] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 在实际应用中，这里会验证手机号和验证码
-    login();
-    navigate("/dashboard", { replace: true });
+    if (!phone || !code) {
+      showError("请输入手机号和验证码");
+      return;
+    }
+    
+    try {
+      await login(phone, code);
+      showSuccess("登录成功");
+      navigate("/dashboard", { replace: true });
+    } catch (error) {
+      showError("登录失败，请检查手机号和验证码");
+      console.error("Login error:", error);
+    }
+  };
+
+  const handleGetCode = () => {
+    // 这里应该调用获取验证码的API
+    showSuccess("验证码已发送，请注意查收");
   };
 
   return (
@@ -38,6 +57,8 @@ const LoginPage = () => {
                   id="phone"
                   type="tel"
                   placeholder="请输入您的手机号"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   required
                   className="bg-[#2C2C2C] border-zinc-700"
                 />
@@ -49,16 +70,27 @@ const LoginPage = () => {
                     id="code"
                     type="text"
                     placeholder="请输入验证码"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
                     required
                     className="bg-[#2C2C2C] border-zinc-700"
                   />
-                  <Button type="button" variant="outline" className="bg-[#2C2C2C] border-zinc-700 hover:bg-zinc-700 whitespace-nowrap">
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={handleGetCode}
+                    className="bg-[#2C2C2C] border-zinc-700 hover:bg-zinc-700 whitespace-nowrap"
+                  >
                     获取验证码
                   </Button>
                 </div>
               </div>
-              <Button type="submit" className="w-full bg-white text-black hover:bg-gray-200">
-                登录
+              <Button 
+                type="submit" 
+                className="w-full bg-white text-black hover:bg-gray-200"
+                disabled={loading}
+              >
+                {loading ? "登录中..." : "登录"}
               </Button>
             </div>
           </form>
