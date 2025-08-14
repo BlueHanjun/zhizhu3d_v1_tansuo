@@ -29,7 +29,7 @@ const LoginPage = () => {
     setIsSendingCode(true);
     const toastId = showLoading("正在发送验证码...");
     try {
-      await api.post('/api/auth/send-code', { phoneNumber });
+      await api.post('/api/auth/send-code', { phone_number: phoneNumber });
       dismissToast(toastId);
       showSuccess("验证码已发送，请注意查收。");
     } catch (error) {
@@ -47,7 +47,7 @@ const LoginPage = () => {
     }
     const toastId = showLoading("正在登录...");
     try {
-      const response = await api.post<{ token: string }, { phoneNumber: string, code: string }>('/api/auth/login', { phoneNumber, code });
+      const response = await api.post<{ token: string }, { phone_number: string, code: string }>('/api/auth/login', { phone_number: phoneNumber, code });
       dismissToast(toastId);
       showSuccess("登录成功！");
       login(response.token);
