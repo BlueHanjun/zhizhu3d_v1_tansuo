@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Rnd } from 'react-rnd';
-import { Plus, Square } from 'lucide-react';
+import { Plus, Square, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export interface Shape {
@@ -81,11 +81,19 @@ const DemoCanvas = ({ room, setRoom, furnitures, setFurnitures }: DemoCanvasProp
     }
   };
 
+  const handleDeleteShape = (id: string) => {
+    if (id === 'room') {
+      setRoom(null);
+    } else {
+      setFurnitures(furnitures.filter(f => f.id !== id));
+    }
+  };
+
   const renderShape = (shape: Shape) => {
     const isRoom = shape.id === 'room';
     const shapeClasses = isRoom
-      ? 'bg-blue-900/50 border-2 border-blue-500 flex items-center justify-center rounded-sm'
-      : 'bg-zinc-700/80 border border-zinc-500 flex items-center justify-center rounded-sm';
+      ? 'bg-blue-900/50 border-2 border-blue-500 flex items-center justify-center rounded-sm group'
+      : 'bg-zinc-700/80 border border-zinc-500 flex items-center justify-center rounded-sm group';
     const textClasses = 'text-white text-sm select-none px-2 py-1';
 
     return (
@@ -105,6 +113,17 @@ const DemoCanvas = ({ room, setRoom, furnitures, setFurnitures }: DemoCanvasProp
         className={shapeClasses}
       >
         <span className={textClasses}>{shape.name}</span>
+        <Button
+          variant="destructive"
+          size="icon"
+          className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-5 h-5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDeleteShape(shape.id);
+          }}
+        >
+          <X className="h-3 w-3" />
+        </Button>
         {isRoom && (
           <>
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-zinc-400 bg-zinc-900 px-1 rounded">{shape.width * 10}mm</div>
