@@ -81,31 +81,39 @@ const DemoCanvas = ({ room, setRoom, furnitures, setFurnitures }: DemoCanvasProp
     }
   };
 
-  const renderShape = (shape: Shape) => (
-    <Rnd
-      key={shape.id}
-      size={{ width: shape.width, height: shape.height }}
-      position={{ x: shape.x, y: shape.y }}
-      onDragStop={(_e, d) => updateShape(shape.id, { x: d.x, y: d.y })}
-      onResizeStop={(_e, _direction, ref, _delta, position) => {
-        updateShape(shape.id, {
-          width: parseInt(ref.style.width, 10),
-          height: parseInt(ref.style.height, 10),
-          ...position,
-        });
-      }}
-      bounds="parent"
-      className="border border-black bg-white/80 flex items-center justify-center"
-    >
-      <span className="text-black text-sm select-none">{shape.name}</span>
-      {shape.id === 'room' && (
-        <>
-          <div className="absolute -top-5 left-1/2 -translate-x-1/2 text-xs text-gray-400">{shape.width * 10}mm</div>
-          <div className="absolute -right-10 top-1/2 -translate-y-1/2 rotate-90 text-xs text-gray-400">{shape.height * 10}mm</div>
-        </>
-      )}
-    </Rnd>
-  );
+  const renderShape = (shape: Shape) => {
+    const isRoom = shape.id === 'room';
+    const shapeClasses = isRoom
+      ? 'bg-blue-900/50 border-2 border-blue-500 flex items-center justify-center rounded-sm'
+      : 'bg-zinc-700/80 border border-zinc-500 flex items-center justify-center rounded-sm';
+    const textClasses = 'text-white text-sm select-none px-2 py-1';
+
+    return (
+      <Rnd
+        key={shape.id}
+        size={{ width: shape.width, height: shape.height }}
+        position={{ x: shape.x, y: shape.y }}
+        onDragStop={(_e, d) => updateShape(shape.id, { x: d.x, y: d.y })}
+        onResizeStop={(_e, _direction, ref, _delta, position) => {
+          updateShape(shape.id, {
+            width: parseInt(ref.style.width, 10),
+            height: parseInt(ref.style.height, 10),
+            ...position,
+          });
+        }}
+        bounds="parent"
+        className={shapeClasses}
+      >
+        <span className={textClasses}>{shape.name}</span>
+        {isRoom && (
+          <>
+            <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs text-zinc-400 bg-zinc-900 px-1 rounded">{shape.width * 10}mm</div>
+            <div className="absolute -right-12 top-1/2 -translate-y-1/2 rotate-90 text-xs text-zinc-400 bg-zinc-900 px-1 rounded">{shape.height * 10}mm</div>
+          </>
+        )}
+      </Rnd>
+    );
+  };
 
   return (
     <div className="w-full h-full flex gap-4">
@@ -122,7 +130,11 @@ const DemoCanvas = ({ room, setRoom, furnitures, setFurnitures }: DemoCanvasProp
       </div>
       <div
         ref={canvasRef}
-        className="flex-1 bg-zinc-800/50 rounded-lg relative overflow-hidden border border-zinc-800"
+        className="flex-1 bg-zinc-900 rounded-lg relative overflow-hidden border border-zinc-700"
+        style={{
+          backgroundImage: 'radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 0)',
+          backgroundSize: '16px 16px',
+        }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
