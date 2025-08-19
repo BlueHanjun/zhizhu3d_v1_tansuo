@@ -69,32 +69,35 @@ const DemoPage = () => {
         <p className="text-gray-400 mt-2">Demo体验也会消耗您的余额。</p>
       </div>
 
-      <div className="flex items-center gap-4 my-6">
-        <div>
-          <label className="text-sm text-gray-400">房间类型</label>
-          <Select value={roomType} onValueChange={setRoomType}>
-            <SelectTrigger className="w-[180px] bg-[#1C1C1C] border-zinc-700">
-              <SelectValue placeholder="选择房间类型" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#1C1C1C] border-zinc-700 text-white">
-              {roomTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label className="text-sm text-gray-400">布灯风格</label>
-          <Select value={lightingStyle} onValueChange={setLightingStyle}>
-            <SelectTrigger className="w-[180px] bg-[#1C1C1C] border-zinc-700">
-              <SelectValue placeholder="选择布灯风格" />
-            </SelectTrigger>
-            <SelectContent className="bg-[#1C1C1C] border-zinc-700 text-white">
-              {lightingStyles.map(style => <SelectItem key={style} value={style}>{style}</SelectItem>)}
-            </SelectContent>
-          </Select>
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">自动布灯</h2>
+        <div className="flex items-center gap-4">
+          <div>
+            <label className="text-sm text-gray-400">房间类型</label>
+            <Select value={roomType} onValueChange={setRoomType}>
+              <SelectTrigger className="w-[180px] bg-[#1C1C1C] border-zinc-700">
+                <SelectValue placeholder="选择房间类型" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#1C1C1C] border-zinc-700 text-white">
+                {roomTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="text-sm text-gray-400">布灯风格</label>
+            <Select value={lightingStyle} onValueChange={setLightingStyle}>
+              <SelectTrigger className="w-[180px] bg-[#1C1C1C] border-zinc-700">
+                <SelectValue placeholder="选择布灯风格" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#1C1C1C] border-zinc-700 text-white">
+                {lightingStyles.map(style => <SelectItem key={style} value={style}>{style}</SelectItem>)}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 flex items-center gap-8">
+      <div className="flex-1 flex items-center gap-8 mt-6">
         <div className="flex-1 h-[60vh] flex items-center justify-center">
           <DemoCanvas 
             room={room} 
