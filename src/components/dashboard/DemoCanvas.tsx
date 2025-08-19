@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Rnd } from 'react-rnd';
 import { Plus, Square } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export interface Shape {
   id: string;
