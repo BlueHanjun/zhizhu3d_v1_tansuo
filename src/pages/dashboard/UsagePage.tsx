@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { useUsage } from "@/hooks/useUsage";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
@@ -15,8 +17,26 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const UsagePage = () => {
-  const { usageData, balance, loading, error } = useUsage();
-
+  const [selectedYear, setSelectedYear] = useState(2025);
+  const [selectedMonth, setSelectedMonth] = useState(8);
+  const { usageData, balance, loading, error, refetch } = useUsage();
+  const navigate = useNavigate();
+  
+  const handleYearChange = (year: number) => {
+    setSelectedYear(year);
+    refetch('monthly', `${year}-${selectedMonth.toString().padStart(2, '0')}`);
+  };
+  
+  const handleMonthChange = (month: number) => {
+    setSelectedMonth(month);
+    refetch('monthly', `${selectedYear}-${month.toString().padStart(2, '0')}`);
+  };
+  
+  // 初始化时获取数据
+  useEffect(() => {
+    refetch('monthly', `${selectedYear}-${selectedMonth.toString().padStart(2, '0')}`);
+  }, []);
+  
   if (loading) {
     return (
       <div className="space-y-8 text-white">
@@ -57,8 +77,8 @@ const UsagePage = () => {
           <CardTitle className="text-sm font-medium text-gray-300">充值余额</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
-          <div className="text-3xl font-bold">¥ {balance.amount.toFixed(2)}</div>
-          <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-md">去充值</Button>
+          <div className="text-3xl font-bold">¥ {balance?.amount?.toFixed(2) || '0.00'}</div>
+          <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-md" onClick={() => navigate('/dashboard/billing')}>去充值</Button>
         </CardContent>
       </Card>
 
@@ -66,7 +86,26 @@ const UsagePage = () => {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle className="text-lg">用量明细</CardTitle>
-            <Button variant="outline" className="bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 rounded-md">2025-8月</Button>
+            <div className="flex gap-2">
+              <select 
+                value={selectedYear}
+                onChange={(e) => handleYearChange(parseInt(e.target.value))}
+                className="bg-zinc-800 border-zinc-700 text-white rounded-md px-2 py-1"
+              >
+                {[2023, 2024, 2025, 2026, 2027].map(year => (
+                  <option key={year} value={year}>{year}年</option>
+                ))}
+              </select>
+              <select 
+                value={selectedMonth}
+                onChange={(e) => handleMonthChange(parseInt(e.target.value))}
+                className="bg-zinc-800 border-zinc-700 text-white rounded-md px-2 py-1"
+              >
+                {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
+                  <option key={month} value={month}>{month}月</option>
+                ))}
+              </select>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="h-[350px] pt-4">

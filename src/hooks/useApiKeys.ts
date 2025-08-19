@@ -4,7 +4,7 @@ import { apiService } from '@/services/api';
 export interface ApiKey {
   id: string;
   name: string;
-  key: string;
+  key_prefix: string;
   created_at: string;
 }
 
@@ -26,9 +26,9 @@ export const useApiKeys = () => {
     }
   };
 
-  const createApiKey = async (name: string) => {
+  const createApiKey = async (name: string, token: string) => {
     try {
-      const response = await apiService.apiKeys.create(name);
+      const response = await apiService.apiKeys.create(name, token);
       // 重新获取API密钥列表
       await fetchApiKeys();
       return response.data;

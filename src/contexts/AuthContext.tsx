@@ -20,13 +20,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('isAuthenticated', String(isAuthenticated));
   }, [isAuthenticated]);
 
+  // 修改login函数中的响应处理
   const login = async (phone: string, code: string) => {
     setLoading(true);
     try {
       const response = await apiService.auth.login(phone, code);
-      // 假设API返回中包含api_key
-      if (response.data.api_key) {
-        localStorage.setItem('api_key', response.data.api_key);
+      debugger;
+      // API文档中返回的是token字段
+      if (response.data.token) {
+        localStorage.setItem('api_key', response.data.token);
         setIsAuthenticated(true);
       }
     } finally {

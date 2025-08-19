@@ -144,7 +144,7 @@ const BillingPage = () => {
                 <TableRow key={bill.id} className="border-0 hover:bg-zinc-900">
                   <TableCell className="font-mono py-4">{bill.id}</TableCell>
                   <TableCell className="py-4">¥{bill.amount.toFixed(2)}</TableCell>
-                  <TableCell className="py-4">{new Date(bill.date).toLocaleString()}</TableCell>
+                  <TableCell className="py-4">{new Date(bill.created_at).toLocaleString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

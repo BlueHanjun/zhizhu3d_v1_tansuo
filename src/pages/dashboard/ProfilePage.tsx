@@ -25,13 +25,7 @@ const ProfilePage = () => {
             <span className="text-gray-400">手机号码</span>
             <span className="font-mono">186****8637</span>
           </div>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-400">实名认证</span>
-            <div className="text-right">
-              <p>*想</p>
-              <p className="font-mono text-gray-400">330424********2415</p>
-            </div>
-          </div>
+
         </CardContent>
       </Card>
 

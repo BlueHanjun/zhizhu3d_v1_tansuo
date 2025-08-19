@@ -21,7 +21,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () =>(
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />

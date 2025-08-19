@@ -12,6 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { showError, showSuccess } from "@/utils/toast";
+import { apiService } from "@/services/api";
 
 const LoginPage = () => {
   const { login, loading } = useAuth();
@@ -36,9 +37,19 @@ const LoginPage = () => {
     }
   };
 
-  const handleGetCode = () => {
-    // 这里应该调用获取验证码的API
-    showSuccess("验证码已发送，请注意查收");
+  const handleGetCode = async () => {
+    if (!phone) {
+      showError("请输入手机号");
+      return;
+    }
+    
+    try {
+      await apiService.auth.sendCode(phone);
+      showSuccess("验证码已发送，请注意查收");
+    } catch (error) {
+      showError("发送验证码失败，请稍后重试");
+      console.error("Send code error:", error);
+    }
   };
 
   return (

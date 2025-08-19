@@ -4,7 +4,7 @@ import { apiService } from '@/services/api';
 export interface Bill {
   id: string;
   amount: number;
-  date: string;
+  created_at: string;
   status: string;
 }
 
