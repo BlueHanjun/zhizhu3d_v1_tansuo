@@ -15,6 +15,7 @@ import UsagePage from "@/pages/dashboard/UsagePage";
 import ApiKeysPage from "@/pages/dashboard/ApiKeysPage";
 import BillingPage from "@/pages/dashboard/BillingPage";
 import ProfilePage from "@/pages/dashboard/ProfilePage";
+import DemoPage from "@/pages/dashboard/DemoPage";
 import LoginPage from "@/pages/LoginPage";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -41,6 +42,7 @@ const App = () =>(
                 <Route path="usage" element={<UsagePage />} />
                 <Route path="api-keys" element={<ApiKeysPage />} />
                 <Route path="billing" element={<BillingPage />} />
+                <Route path="demo" element={<DemoPage />} />
                 <Route path="profile" element={<ProfilePage />} />
               </Route>
             </Route>

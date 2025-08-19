@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { BarChart2, KeyRound, CreditCard, User } from "lucide-react";
+import { BarChart2, KeyRound, CreditCard, User, Wand2 } from "lucide-react";
 
 const Sidebar = () => {
   const navItems = [
@@ -33,6 +33,13 @@ const Sidebar = () => {
         </nav>
       </div>
       <div>
+        <NavLink
+          to="/dashboard/demo"
+          className={getNavLinkClass}
+        >
+          <Wand2 className="h-4 w-4" />
+          体验Demo
+        </NavLink>
         <NavLink
           to="/dashboard/profile"
           className={getNavLinkClass}
