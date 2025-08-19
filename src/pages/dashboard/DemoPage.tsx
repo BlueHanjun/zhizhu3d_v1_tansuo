@@ -11,7 +11,7 @@ const lightingStyles = ["无主灯", "主灯"];
 const DemoPage = () => {
   const [room, setRoom] = useState<Shape | null>(null);
   const [furnitures, setFurnitures] = useState<Shape[]>([]);
-  const [roomType, setRoomType] = useState("走廊");
+  const [roomType, setRoomType] = useState("客厅");
   const [lightingStyle, setLightingStyle] = useState("无主灯");
   const [generatedJson, setGeneratedJson] = useState("");
 
