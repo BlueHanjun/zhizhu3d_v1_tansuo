@@ -2,10 +2,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { apiService } from "@/services/api";
 
 const ProfilePage = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [user, setUser] = useState({ phone_number: "" });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await apiService.user.getProfile();
+        setUser(response.data);
+      } catch (error) {
+        console.error("获取用户信息失败:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -23,9 +42,12 @@ const ProfilePage = () => {
         <CardContent className="p-0 space-y-8">
           <div className="flex justify-between items-center">
             <span className="text-gray-400">手机号码</span>
-            <span className="font-mono">186****8637</span>
+            {loading ? (
+              <span className="font-mono">加载中...</span>
+            ) : (
+              <span className="font-mono">{user.phone_number}</span>
+            )}
           </div>
-
         </CardContent>
       </Card>
 

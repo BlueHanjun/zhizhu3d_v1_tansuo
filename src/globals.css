@@ -56,5 +56,26 @@
   body {
     @apply bg-background text-foreground;
     background-color: #000;
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  h2 {
+    letter-spacing: 3px;
+  }
+  .bg-gradient-animation {
+    background: radial-gradient(circle, #010004, #AB0000);
+    background-size: 200% 200%;
+    animation: gradient 20s ease infinite;
+  }
+  
+  @keyframes gradient {
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
   }
 }

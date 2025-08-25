@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setLoading(true);
     try {
       const response = await apiService.auth.login(phone, code);
-      debugger;
       // API文档中返回的是token字段
       if (response.data.token) {
         localStorage.setItem('api_key', response.data.token);

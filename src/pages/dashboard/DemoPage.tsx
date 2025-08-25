@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { showError, showSuccess } from "@/utils/toast";
 import DemoCanvas from "@/components/dashboard/DemoCanvas";
 import type { Shape } from "@/components/dashboard/DemoCanvas";
+import { CozeAPI } from '@coze/api';
 
 const roomTypes = ["客厅", "餐厅", "卧室", "厨房", "卫生间", "走廊"];
 const lightingStyles = ["无主灯", "主灯"];
@@ -14,12 +15,29 @@ const DemoPage = () => {
   const [roomType, setRoomType] = useState("客厅");
   const [lightingStyle, setLightingStyle] = useState("无主灯");
   const [generatedJson, setGeneratedJson] = useState("");
+  const [lightingImageUrl, setLightingImageUrl] = useState("");
+  const [designIntent, setDesignIntent] = useState("");
+  const [lightPositions, setLightPositions] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [requestTime, setRequestTime] = useState(0);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!room) {
       showError("请先绘制房间");
       return;
     }
+
+    // Start timing
+    setLoading(true);
+    const startTime = Date.now();
+    setRequestTime(0);
+    
+    // Set up interval to update timer every 100ms
+    const timerInterval = setInterval(() => {
+      const currentTime = Date.now();
+      const elapsed = (currentTime - startTime) / 1000;
+      setRequestTime(parseFloat(elapsed.toFixed(2)));
+    }, 100);
 
     const scale = 10; // 1px = 10mm
 
@@ -51,15 +69,99 @@ const DemoPage = () => {
       furnituresStr += `${f.name}:[${furnitureContour.map(p => `(${p[0].toFixed(0)},${p[1].toFixed(0)})`).join(',')}],`;
     });
 
-    const result = {
-      contour: contourStr,
-      furnitures: furnituresStr,
-      style: lightingStyle,
-      type: roomType,
-    };
+    try {
+      const apiClient = new CozeAPI({
+        token: 'cztei_hkgpCGwCw1AQJ4HkLhx0L28GPMLMBZ1pM36oCIx5a05hFVratQWb5zkiuELjWJ0XH',
+        baseURL: 'https://api.coze.cn'
+      });
+      
+      const res = await apiClient.workflows.runs.create({
+        workflow_id: '7536895894852960302',
+        parameters: {
+          contour: contourStr,
+          furnitures: furnituresStr,
+          style: lightingStyle,
+          type: roomType
+        }
+      });
 
-    setGeneratedJson(JSON.stringify(result, null, 2));
-    showSuccess("数据生成成功！");
+      // Parse the response data
+      const responseData = typeof res === 'string' ? JSON.parse(res) : res;
+      
+      setGeneratedJson(JSON.stringify(res, null, 2));
+      
+      // Extract data from the response
+      if (responseData.data) {
+        const data = typeof responseData.data === 'string' ? JSON.parse(responseData.data) : responseData.data;
+        
+        // Set lighting image URL
+        setLightingImageUrl(data.lighting2D?.download_url || "");
+        
+        // Set design intent (output) - parsing from content
+        if (data.content) {
+          // Split content by newlines and find the output section
+          const sections = data.content.split('\n');
+          for (const section of sections) {
+            if (section.startsWith('output：')) {
+              setDesignIntent(section.substring(8).trim()); // Remove 'output：' prefix
+              break;
+            }
+          }
+        }
+        
+        // Set light positions (location) - parsing from content
+        if (data.content) {
+          // Split content by newlines and find the location section
+          const sections = data.content.split('\n');
+          for (const section of sections) {
+            if (section.startsWith('location：')) {
+              setLightPositions(section.substring(10).trim()); // Remove 'location：' prefix
+              break;
+            }
+          }
+        }
+      } else {
+        // Handle case where data is directly in the response (like in the user's example)
+        // The user's example shows the data directly in the response, not nested in a data field
+        setLightingImageUrl(responseData.lighting2D?.download_url || "");
+        
+        // Set design intent (output) - parsing from content
+        if (responseData.content) {
+          // Split content by newlines and find the output section
+          const sections = responseData.content.split('\n');
+          for (const section of sections) {
+            if (section.startsWith('output：')) {
+              setDesignIntent(section.substring(8).trim()); // Remove 'output：' prefix
+              break;
+            }
+          }
+        }
+        
+        // Set light positions (location) - parsing from content
+        if (responseData.content) {
+          // Split content by newlines and find the location section
+          const sections = responseData.content.split('\n');
+          for (const section of sections) {
+            if (section.startsWith('location：')) {
+              setLightPositions(section.substring(10).trim()); // Remove 'location：' prefix
+              break;
+            }
+          }
+        }
+      }
+      
+      showSuccess("API调用成功！");
+    } catch (error) {
+      console.error('Error calling Coze API:', error);
+      showError("API调用失败: " + (error as Error).message);
+    } finally {
+      // Clear interval and finalize timing
+      clearInterval(timerInterval);
+      const endTime = Date.now();
+      const duration = (endTime - startTime) / 1000;
+      setRequestTime(parseFloat(duration.toFixed(2)));
+      setLoading(false);
+    }
   };
 
   return (
@@ -69,7 +171,7 @@ const DemoPage = () => {
         <p className="text-gray-400 mt-2">Demo体验也会消耗您的余额。</p>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8" id="automatic-lighting">
         <h2 className="text-xl font-semibold mb-4">自动布灯</h2>
         <div className="flex items-center gap-4">
           <div>
@@ -97,8 +199,8 @@ const DemoPage = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex items-center gap-8 mt-6">
-        <div className="flex-1 h-[60vh] flex items-center justify-center">
+      <div className="flex-1 flex flex-col gap-6 mt-6 h-full">
+        <div className="h-[60vh] flex items-center justify-center w-full max-w-6xl">
           <DemoCanvas 
             room={room} 
             setRoom={setRoom} 
@@ -106,14 +208,46 @@ const DemoPage = () => {
             setFurnitures={setFurnitures} 
           />
         </div>
-        <div className="flex flex-col items-center gap-4">
-          <Button onClick={handleGenerate} className="bg-white text-black hover:bg-gray-200">确认生成</Button>
+        <div className="flex justify-start items-center" style={{ marginLeft: '522px' }}>
+          <Button 
+            onClick={handleGenerate} 
+            className="bg-white text-black hover:bg-gray-200"
+            disabled={loading}
+          >
+            {loading ? `请求中... (${requestTime.toFixed(2)}s)` : "确认生成"}
+          </Button>
         </div>
-        <div className="w-[400px] h-[60vh] bg-[#1C1C1C] rounded-lg p-4 border border-zinc-800">
-          <pre className="text-sm text-gray-300 h-full overflow-auto whitespace-pre-wrap">
-            <code>{generatedJson}</code>
-          </pre>
-        </div>
+        {/* Lighting Image Display */}
+        {lightingImageUrl && (
+          <div className="w-full bg-[#1C1C1C] rounded-lg p-4 border border-zinc-800 max-w-6xl">
+            <h3 className="text-lg font-semibold mb-2">布灯效果图</h3>
+            <img 
+              src={lightingImageUrl} 
+              alt="布灯效果图" 
+              className="max-w-full h-auto rounded"
+              onError={(e) => {
+                console.error('Image failed to load:', e);
+                // Optionally set a fallback or hide the image
+              }}
+            />
+          </div>
+        )}
+        
+        {/* Design Intent Display */}
+        {designIntent && (
+          <div className="w-full bg-[#1C1C1C] rounded-lg p-4 border border-zinc-800 max-w-6xl">
+            <h3 className="text-lg font-semibold mb-2">设计意图</h3>
+            <p className="text-gray-300 whitespace-pre-wrap">{designIntent}</p>
+          </div>
+        )}
+        
+        {/* Light Positions Display */}
+        {lightPositions && (
+          <div className="w-full bg-[#1C1C1C] rounded-lg p-4 border border-zinc-800 max-w-6xl">
+            <h3 className="text-lg font-semibold mb-2">灯具点位</h3>
+            <p className="text-gray-300 whitespace-pre-wrap">{lightPositions}</p>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // 创建axios实例
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8001/api', // 假设的API基础URL
+  baseURL: 'http://localhost:8001/api', // 本地API基础URL
+  //baseURL: '/api', // 服务器API基础URL
   timeout: 10000,
 });
 
@@ -76,11 +77,11 @@ export const apiService = {
   usage: {
     getBalance: () => 
       apiClient.get('/usage/summary'),
-    getUsageHistory: (params?: { 
-      period?: string;
-      date?: string;
-    }) => 
-      apiClient.get('/usage/summary', { params }),
+    getUsageHistory: (
+      params?: { 
+        period?: string;
+        date?: string;
+      }) => apiClient.get('/usage/summary', { params })
   },
 
   // 账单管理

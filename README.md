@@ -45,3 +45,11 @@ API_KEY=your_actual_api_key_here node test-usage-api.mjs daily 2023-01-01
 ```
 
 这将使用 `period=daily` 和 `date=2023-01-01` 参数调用接口。
+
+## 部署指南
+
+有关如何将此项目部署到阿里云ECS服务器的详细信息，请参阅 [ECS部署指南](DEPLOYMENT_ECS.md)。
+
+### 自动化部署
+
+本项目包含一个自动化部署脚本，可以简化部署流程。有关如何使用自动化部署脚本的详细信息，请参阅 [自动化部署说明](DEPLOYMENT_AUTOMATION.md)。

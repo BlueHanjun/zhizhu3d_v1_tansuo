@@ -45,8 +45,8 @@ export const useUsage = (initialPeriod: string = 'monthly', initialDate: string 
       
       // 获取用量历史数据
       const usageResponse = await apiService.usage.getUsageHistory({
-        period: periodToUse,
-        date: dateToUse,
+          period: periodToUse,
+          date: dateToUse,
       });
       // 将API返回的数据转换为图表组件所需的格式
       const formattedData: UsageData[] = usageResponse.data.records.map((record: UsageSummary['records'][0]) => ({
