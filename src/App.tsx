@@ -19,6 +19,7 @@ import DemoPage from "@/pages/dashboard/DemoPage";
 import LoginPage from "@/pages/LoginPage";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { LanguageProvider } from "@/contexts/LanguageContext";
 
 const queryClient = new QueryClient();
 
@@ -27,29 +28,31 @@ const App = () =>(
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<MainLayout />}>
-              <Route path="/" element={<Index />} />
-              <Route path="/docs" element={<DocsPage />} />
-              <Route path="/contact" element={<ContactPage />} />
-            </Route>
-            <Route path="/login" element={<LoginPage />} />
-            <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<DashboardLayout />}>
-                <Route index element={<Navigate to="/dashboard/usage" replace />} />
-                <Route path="usage" element={<UsagePage />} />
-                <Route path="api-keys" element={<ApiKeysPage />} />
-                <Route path="billing" element={<BillingPage />} />
-                <Route path="demo" element={<DemoPage />} />
-                <Route path="profile" element={<ProfilePage />} />
+      <LanguageProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<MainLayout />}>
+                <Route path="/" element={<Index />} />
+                <Route path="/docs" element={<DocsPage />} />
+                <Route path="/contact" element={<ContactPage />} />
               </Route>
-            </Route>
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
+              <Route path="/login" element={<LoginPage />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<Navigate to="/dashboard/usage" replace />} />
+                  <Route path="usage" element={<UsagePage />} />
+                  <Route path="api-keys" element={<ApiKeysPage />} />
+                  <Route path="billing" element={<BillingPage />} />
+                  <Route path="demo" element={<DemoPage />} />
+                  <Route path="profile" element={<ProfilePage />} />
+                </Route>
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

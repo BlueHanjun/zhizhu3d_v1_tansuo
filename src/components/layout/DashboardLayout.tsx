@@ -10,8 +10,10 @@ const DashboardLayout = () => {
       <div className="flex flex-1 pt-16 overflow-hidden">
         <Sidebar />
         <div className="flex-1 flex flex-col overflow-y-auto">
-          <main className="flex-1 p-8">
-            <Outlet />
+          <main className="flex-1 flex justify-center p-8">
+            <div className="w-full max-w-6xl">
+              <Outlet />
+            </div>
           </main>
           <Footer />
         </div>

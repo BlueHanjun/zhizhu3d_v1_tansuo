@@ -62,7 +62,7 @@
     letter-spacing: 3px;
   }
   .bg-gradient-animation {
-    background: radial-gradient(circle, #010004, #AB0000);
+    background: radial-gradient(circle, #010004, #A20000);
     background-size: 200% 200%;
     animation: gradient 20s ease infinite;
   }

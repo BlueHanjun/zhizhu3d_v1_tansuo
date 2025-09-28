@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Rnd } from 'react-rnd';
 import { Plus, Square, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export interface Shape {
   id: string;
@@ -26,9 +27,16 @@ const furniturePresets = [
   { name: '椅子', width: 50, height: 50 },
   { name: '柜子', width: 150, height: 60 },
   { name: '挂画', width: 80, height: 60 },
+  { name: '电视', width: 120, height: 70 },
+  { name: '茶几', width: 100, height: 50 },
+  { name: '门窗', width: 80, height: 200 },
+  { name: '窗帘', width: 100, height: 150 },
+  { name: '绿植', width: 60, height: 80 },
+  { name: '其他', width: 100, height: 100 },
 ];
 
 const DemoCanvas = ({ room, setRoom, furnitures, setFurnitures }: DemoCanvasProps) => {
+  const { t } = useLanguage();
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -36,7 +44,7 @@ const DemoCanvas = ({ room, setRoom, furnitures, setFurnitures }: DemoCanvasProp
   const handleAddFurniture = (preset: typeof furniturePresets[0]) => {
     const newFurniture: Shape = {
       id: `furn-${Date.now()}`,
-      name: preset.name,
+      name: t(`demo.furniture.${preset.name}`),
       x: 20,
       y: 20,
       width: preset.width,
@@ -60,7 +68,7 @@ const DemoCanvas = ({ room, setRoom, furnitures, setFurnitures }: DemoCanvasProp
 
     const newRoom = {
       id: 'room',
-      name: '房间',
+      name: t('demo.room'),
       x: Math.min(startPos.x, currentX),
       y: Math.min(startPos.y, currentY),
       width: Math.abs(currentX - startPos.x),
@@ -136,14 +144,14 @@ const DemoCanvas = ({ room, setRoom, furnitures, setFurnitures }: DemoCanvasProp
 
   return (
     <div className="w-full h-full flex gap-4">
-      <div className="w-40 bg-[#1C1C1C] rounded-lg p-2 flex flex-col gap-2 border border-zinc-800">
-        <Button variant="ghost" onClick={() => setRoom(null)} className="w-full justify-start gap-2">
-          <Square size={16} /> 画房间
+      <div className="w-36 bg-[#1C1C1C] rounded-lg p-2 flex flex-col gap-1 border border-zinc-800 h-auto min-h-[200px]">
+        <Button variant="ghost" size="sm" onClick={() => setRoom(null)} className="w-full justify-start gap-2 h-8 px-2">
+          <Square size={14} /> {t('demo.drawRoom')}
         </Button>
-        <hr className="border-zinc-700 my-2" />
+        <hr className="border-zinc-700 my-1" />
         {furniturePresets.map(preset => (
-          <Button key={preset.name} variant="ghost" onClick={() => handleAddFurniture(preset)} className="w-full justify-start gap-2">
-            <Plus size={16} /> {preset.name}
+          <Button key={preset.name} variant="ghost" size="sm" onClick={() => handleAddFurniture(preset)} className="w-full justify-start gap-2 h-8 px-2">
+            <Plus size={14} /> {t(`demo.furniture.${preset.name}`)}
           </Button>
         ))}
       </div>

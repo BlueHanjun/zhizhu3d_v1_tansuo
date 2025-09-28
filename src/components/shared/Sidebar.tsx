@@ -1,11 +1,13 @@
 import { NavLink } from "react-router-dom";
 import { BarChart2, KeyRound, CreditCard, User, Wand2 } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Sidebar = () => {
+  const { t } = useLanguage();
   const navItems = [
-    { name: "用量信息", href: "/dashboard/usage", icon: BarChart2 },
-    { name: "API keys", href: "/dashboard/api-keys", icon: KeyRound },
-    { name: "充值&账单", href: "/dashboard/billing", icon: CreditCard },
+    { name: t('sidebar.usage'), href: "/dashboard/usage", icon: BarChart2 },
+    { name: t('sidebar.apiKeys'), href: "/dashboard/api-keys", icon: KeyRound },
+    { name: t('sidebar.billing'), href: "/dashboard/billing", icon: CreditCard },
   ];
 
   const activeClassName = "bg-zinc-800 text-white";
@@ -30,22 +32,22 @@ const Sidebar = () => {
               {item.name}
             </NavLink>
           ))}
+          <NavLink
+            to="/dashboard/demo"
+            className={getNavLinkClass}
+          >
+            <Wand2 className="h-4 w-4" />
+            {t('sidebar.demo')}
+          </NavLink>
         </nav>
       </div>
       <div>
-        <NavLink
-          to="/dashboard/demo"
-          className={getNavLinkClass}
-        >
-          <Wand2 className="h-4 w-4" />
-          体验Demo
-        </NavLink>
         <NavLink
           to="/dashboard/profile"
           className={getNavLinkClass}
         >
           <User className="h-4 w-4" />
-          个人信息
+          {t('sidebar.profile')}
         </NavLink>
       </div>
     </aside>

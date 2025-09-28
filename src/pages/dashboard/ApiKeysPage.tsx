@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Trash2, Copy } from "lucide-react";
 import { useApiKeys } from "@/hooks/useApiKeys";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useState } from "react";
 import { showError, showSuccess } from "@/utils/toast";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 const ApiKeysPage = () => {
+  const { t } = useLanguage();
   const { apiKeys, loading, error, createApiKey, deleteApiKey } = useApiKeys();
   const [newKeyName, setNewKeyName] = useState("");
   const [showKeyDialog, setShowKeyDialog] = useState(false);
@@ -24,12 +26,12 @@ const ApiKeysPage = () => {
 
   const handleCreateApiKey = async () => {
     if (!newKeyName.trim()) {
-      showError("请输入API密钥名称");
+      showError(t('apiKeys.nameRequired'));
       return;
     }
     const token = localStorage.getItem('api_key');
     if (!token) {
-      showError("请先登录");
+      showError(t('login.required'));
       return;
     }
     try {
@@ -39,18 +41,18 @@ const ApiKeysPage = () => {
       setNewlyCreatedKey({key: response.key, name: response.name});
       // 显示对话框
       setShowKeyDialog(true);
-      showSuccess("API密钥创建成功");
+      showSuccess(t('apiKeys.createSuccess'));
     } catch (error) {
-      showError("API密钥创建失败");
+      showError(t('apiKeys.createFailed'));
     }
   };
 
   const handleDeleteApiKey = async (id: string) => {
     try {
       await deleteApiKey(id);
-      showSuccess("API密钥删除成功");
+      showSuccess(t('apiKeys.deleteSuccess'));
     } catch (error) {
-      showError("API密钥删除失败");
+      showError(t('apiKeys.deleteFailed'));
     }
   };
 
@@ -58,11 +60,11 @@ const ApiKeysPage = () => {
     return (
       <div className="space-y-8 text-white">
         <div>
-          <h1 className="text-3xl font-bold">API keys</h1>
-          <p className="text-gray-400 mt-2">请妥善保管您的API keys。</p>
+          <h1 className="text-3xl font-bold">{t('apiKeys.title')}</h1>
+          <p className="text-gray-400 mt-2">{t('apiKeys.description')}</p>
         </div>
         <div className="flex justify-center items-center h-32">
-          加载中...
+          {t('common.loading')}
         </div>
       </div>
     );
@@ -72,8 +74,8 @@ const ApiKeysPage = () => {
     return (
       <div className="space-y-8 text-white">
         <div>
-          <h1 className="text-3xl font-bold">API keys</h1>
-          <p className="text-gray-400 mt-2">请妥善保管您的API keys。</p>
+          <h1 className="text-3xl font-bold">{t('apiKeys.title')}</h1>
+          <p className="text-gray-400 mt-2">{t('apiKeys.description')}</p>
         </div>
         <div className="flex justify-center items-center h-32 text-red-500">
           {error}
@@ -85,13 +87,13 @@ const ApiKeysPage = () => {
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
       toast({
-        title: "复制成功",
-        description: "API密钥已复制到剪贴板",
+        title: t('apiKeys.copySuccess'),
+        description: t('apiKeys.copySuccessDesc'),
       });
     }).catch(() => {
       toast({
-        title: "复制失败",
-        description: "无法复制到剪贴板",
+        title: t('apiKeys.copyFailed'),
+        description: t('apiKeys.copyFailedDesc'),
         variant: "destructive",
       });
     });
@@ -100,18 +102,18 @@ const ApiKeysPage = () => {
   return (
     <div className="space-y-8 text-white">
       <div>
-        <h1 className="text-3xl font-bold">API keys</h1>
-        <p className="text-gray-400 mt-2">请妥善保管您的API keys。</p>
+        <h1 className="text-3xl font-bold">{t('apiKeys.title')}</h1>
+        <p className="text-gray-400 mt-2">{t('apiKeys.description')}</p>
       </div>
 
       <div className="rounded-lg border border-zinc-800 bg-[#1C1C1C]">
         <Table>
           <TableHeader>
             <TableRow className="border-b-zinc-800 hover:bg-transparent">
-              <TableHead className="text-white">名称</TableHead>
-              <TableHead className="text-white">Key</TableHead>
-              <TableHead className="text-white">创建日期</TableHead>
-              <TableHead className="text-right text-white">操作</TableHead>
+              <TableHead className="text-white">{t('apiKeys.name')}</TableHead>
+              <TableHead className="text-white">{t('apiKeys.key')}</TableHead>
+              <TableHead className="text-white">{t('apiKeys.createdDate')}</TableHead>
+              <TableHead className="text-right text-white">{t('apiKeys.actions')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -140,14 +142,14 @@ const ApiKeysPage = () => {
         <Input
           value={newKeyName}
           onChange={(e) => setNewKeyName(e.target.value)}
-          placeholder="输入API密钥名称"
+          placeholder={t('apiKeys.namePlaceholder')}
           className="bg-[#2C2C2C] border-zinc-700 max-w-xs"
         />
         <Button 
           onClick={handleCreateApiKey}
           className="bg-white text-black hover:bg-gray-200 rounded-md"
         >
-          创建API key
+          {t('apiKeys.createButton')}
         </Button>
       </div>
 
@@ -155,16 +157,16 @@ const ApiKeysPage = () => {
       <Dialog open={showKeyDialog} onOpenChange={setShowKeyDialog}>
         <DialogContent className="sm:max-w-md bg-[#1C1C1C] border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="text-white">API密钥已创建</DialogTitle>
+            <DialogTitle className="text-white">{t('apiKeys.keyCreated')}</DialogTitle>
             <DialogDescription className="text-gray-400">
-              请妥善保管您的新API密钥
+              {t('apiKeys.keyDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex items-center space-x-2">
             {newlyCreatedKey && (
               <>
                 <div className="grid flex-1 gap-2">
-                  <div className="text-sm font-medium text-white">密钥名称: {newlyCreatedKey.name}</div>
+                  <div className="text-sm font-medium text-white">{t('apiKeys.keyNameLabel')}: {newlyCreatedKey.name}</div>
                   <div className="relative">
                     <Input
                       readOnly
@@ -185,8 +187,8 @@ const ApiKeysPage = () => {
             )}
           </div>
           <div className="text-sm text-yellow-500 mt-2">
-            密钥只展示这一次，请妥善保管。
-          </div>
+              {t('apiKeys.keyWarning')}
+            </div>
           <DialogFooter>
             <Button 
               variant="secondary" 
@@ -198,7 +200,7 @@ const ApiKeysPage = () => {
               }}
               className="bg-white text-black hover:bg-gray-200"
             >
-              复制并关闭
+              {t('apiKeys.copyAndClose')}
             </Button>
           </DialogFooter>
         </DialogContent>

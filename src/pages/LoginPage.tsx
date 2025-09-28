@@ -9,6 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { showError, showSuccess } from "@/utils/toast";
@@ -16,9 +17,11 @@ import { apiService } from "@/services/api";
 
 const LoginPage = () => {
   const { login, loading } = useAuth();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const [phone, setPhone] = useState("");
   const [code, setCode] = useState("");
+  const [countdown, setCountdown] = useState(0);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,9 +46,23 @@ const LoginPage = () => {
       return;
     }
     
+    if (countdown > 0) return;
+    
     try {
       await apiService.auth.sendCode(phone);
       showSuccess("验证码已发送，请注意查收");
+      
+      // 开始倒计时
+      setCountdown(60);
+      const timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     } catch (error) {
       showError("发送验证码失败，请稍后重试");
       console.error("Send code error:", error);
@@ -56,18 +73,18 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-black">
       <Card className="w-full max-w-sm bg-[#1C1C1C] border-zinc-800 text-white">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">登录</CardTitle>
-          <CardDescription>进入ZHIZHU3D开放平台</CardDescription>
+          <CardTitle className="text-2xl">{t('login.title')}</CardTitle>
+          <CardDescription>{t('login.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin}>
             <div className="grid gap-4">
               <div className="grid gap-2">
-                <Label htmlFor="phone">手机号</Label>
+                <Label htmlFor="phone">{t('login.phoneNumber')}</Label>
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="请输入您的手机号"
+                  placeholder={t('login.phonePlaceholder')}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
@@ -75,12 +92,12 @@ const LoginPage = () => {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="code">验证码</Label>
+                <Label htmlFor="code">{t('login.verificationCode')}</Label>
                 <div className="flex items-center gap-2">
                   <Input
                     id="code"
                     type="text"
-                    placeholder="请输入验证码"
+                    placeholder={t('login.codePlaceholder')}
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     required
@@ -91,8 +108,9 @@ const LoginPage = () => {
                     variant="outline" 
                     onClick={handleGetCode}
                     className="bg-[#2C2C2C] border-zinc-700 hover:bg-zinc-700 whitespace-nowrap"
+                    disabled={countdown > 0}
                   >
-                    获取验证码
+                    {countdown > 0 ? t('login.countdown', { countdown }) : t('login.getCode')}
                   </Button>
                 </div>
               </div>
@@ -101,7 +119,7 @@ const LoginPage = () => {
                 className="w-full bg-white text-black hover:bg-gray-200"
                 disabled={loading}
               >
-                {loading ? "登录中..." : "登录"}
+                {loading ? t('login.loggingIn') : t('login.loginButton')}
               </Button>
             </div>
           </form>

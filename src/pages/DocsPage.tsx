@@ -17,7 +17,12 @@ const DocsPage = () => {
           className={`h-full w-full border-0 rounded-lg transition-opacity duration-300 ${
             isLoading ? "opacity-0" : "opacity-100"
           }`}
+          sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
           onLoad={() => setIsLoading(false)}
+          onError={(e) => {
+            console.error('Iframe failed to load:', e);
+            setIsLoading(false);
+          }}
         />
       </div>
     </div>

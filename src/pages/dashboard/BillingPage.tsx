@@ -7,20 +7,48 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import WechatPayIcon from "@/components/icons/WechatPayIcon";
 import AlipayIcon from "@/components/icons/AlipayIcon";
 import { useBilling } from "@/hooks/useBilling";
-import { useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useState, useRef } from "react";
 import { showError, showSuccess } from "@/utils/toast";
+import { apiService } from '@/services/api';
+import { QRCodeSVG } from "qrcode.react";
 
 const BillingPage = () => {
+  const { t } = useLanguage();
   const { bills, loading, error } = useBilling();
   const [selectedAmount, setSelectedAmount] = useState("100");
+  const [customAmount, setCustomAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("wechat");
+  const [paymentUrl, setPaymentUrl] = useState<string | null>(null);
+  const customInputRef = useRef<HTMLInputElement>(null);
 
   const handleRecharge = async () => {
     try {
-      // 这里应该调用实际的支付接口
-      showSuccess(`已选择${selectedAmount}元，支付方式：${paymentMethod === 'wechat' ? '微信支付' : '支付宝'}`);
-    } catch (error) {
-      showError("支付请求失败");
+      // 调用实际的支付接口
+      const paymentMethodMap = {
+        'wechat': 'wechat_pay',
+        'alipay': 'alipay'
+      };
+      
+      const response = await apiService.billing.createRecharge(
+        parseFloat(selectedAmount), 
+        paymentMethodMap[paymentMethod as keyof typeof paymentMethodMap]
+      );
+      
+      // 处理API返回的支付链接
+      const { payment_url } = response.data;
+      showSuccess(t('billing.paymentSuccess', { 
+        amount: selectedAmount, 
+        method: paymentMethod === 'wechat' ? t('billing.wechatPay') : t('billing.alipay') 
+      }));
+      
+      // 设置支付链接以显示二维码
+      if (payment_url) {
+        setPaymentUrl(payment_url);
+      }
+    } catch (error: any) {
+      console.error("支付请求失败:", error);
+      showError("支付请求失败: " + (error.response?.data?.message || error.message));
     }
   };
 
@@ -28,11 +56,11 @@ const BillingPage = () => {
     return (
       <div className="space-y-8 text-white max-w-3xl">
         <div>
-          <h1 className="text-3xl font-bold">充值&账单</h1>
-          <p className="text-gray-400 mt-2">充值金额用于API服务和网页版Demo体验。</p>
+          <h1 className="text-3xl font-bold">{t('billing.title')}</h1>
+          <p className="text-gray-400 mt-2">{t('billing.description')}</p>
         </div>
         <div className="flex justify-center items-center h-32">
-          加载中...
+          {t('common.loading')}
         </div>
       </div>
     );
@@ -42,8 +70,8 @@ const BillingPage = () => {
     return (
       <div className="space-y-8 text-white max-w-3xl">
         <div>
-          <h1 className="text-3xl font-bold">充值&账单</h1>
-          <p className="text-gray-400 mt-2">充值金额用于API服务和网页版Demo体验。</p>
+          <h1 className="text-3xl font-bold">{t('billing.title')}</h1>
+          <p className="text-gray-400 mt-2">{t('billing.description')}</p>
         </div>
         <div className="flex justify-center items-center h-32 text-red-500">
           {error}
@@ -55,18 +83,18 @@ const BillingPage = () => {
   return (
     <div className="space-y-8 text-white max-w-3xl">
       <div>
-        <h1 className="text-3xl font-bold">充值&账单</h1>
-        <p className="text-gray-400 mt-2">充值金额用于API服务和网页版Demo体验。</p>
+        <h1 className="text-3xl font-bold">{t('billing.title')}</h1>
+        <p className="text-gray-400 mt-2">{t('billing.description')}</p>
       </div>
 
       <Tabs defaultValue="online" className="w-full">
         <TabsList className="grid w-full grid-cols-2 max-w-[200px] bg-[#111] p-1 h-auto rounded-md">
-          <TabsTrigger value="online" className="rounded-sm">在线充值</TabsTrigger>
-          <TabsTrigger value="corporate" className="rounded-sm">对公汇款</TabsTrigger>
+          <TabsTrigger value="online" className="rounded-sm">{t('billing.onlineRecharge')}</TabsTrigger>
+          <TabsTrigger value="corporate" className="rounded-sm">{t('billing.corporateTransfer')}</TabsTrigger>
         </TabsList>
         <TabsContent value="online" className="mt-6 space-y-6 border-t border-zinc-800 pt-6">
           <div className="space-y-3">
-            <Label>支付金额</Label>
+            <Label>{t('billing.paymentAmount')}</Label>
             <ToggleGroup 
               type="single" 
               value={selectedAmount} 
@@ -79,20 +107,33 @@ const BillingPage = () => {
                   key={amount} 
                   value={amount} 
                   className="bg-[#2C2C2C] border-zinc-700 data-[state=on]:bg-white data-[state=on]:text-black hover:bg-zinc-700 px-6 py-2 h-auto rounded-md"
+                  onClick={() => {
+                    setCustomAmount("");
+                  }}
                 >
                   ¥{amount}
                 </ToggleGroupItem>
               ))}
-              <Button 
-                variant="outline" 
-                className="bg-[#2C2C2C] border-zinc-700 hover:bg-zinc-700 px-6 py-2 h-auto rounded-md"
-              >
-                自定义
-              </Button>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm">¥</span>
+                <input
+                  ref={customInputRef}
+                  type="number"
+                  value={customAmount}
+                  onChange={(e) => {
+                    setCustomAmount(e.target.value);
+                    if (e.target.value) {
+                      setSelectedAmount(e.target.value);
+                    }
+                  }}
+                  placeholder={t('billing.customAmount')}
+                  className="bg-[#2C2C2C] border border-zinc-700 hover:bg-zinc-700 px-6 py-2 h-auto rounded-md pl-8 w-[120px] focus:outline-none focus:ring-2 focus:ring-white text-sm"
+                />
+              </div>
             </ToggleGroup>
           </div>
           <div className="space-y-3">
-            <Label>支付方式</Label>
+            <Label>{t('billing.paymentMethod')}</Label>
             <RadioGroup 
               value={paymentMethod} 
               onValueChange={setPaymentMethod}
@@ -100,13 +141,13 @@ const BillingPage = () => {
             >
               <Label htmlFor="wechat" className="flex items-center p-4 rounded-md border border-zinc-700 bg-[#2C2C2C] has-[:checked]:border-white cursor-pointer transition-colors">
                 <RadioGroupItem value="wechat" id="wechat" className="mr-4" />
-                <WechatPayIcon className="h-6 w-6 mr-3" />
-                微信支付
+                <img src="/weixin.svg" alt={t('billing.wechatPay')} className="h-6 w-6 mr-3" />
+                {t('billing.wechatPay')}
               </Label>
-              <Label htmlFor="alipay" className="flex items-center p-4 rounded-md border border-zinc-700 bg-[#2C2C2C] has-[:checked]:border-white cursor-pointer transition-colors">
-                <RadioGroupItem value="alipay" id="alipay" className="mr-4" />
-                <AlipayIcon className="h-6 w-6 mr-3" />
-                支付宝
+              <Label htmlFor="alipay" className="flex items-center p-4 rounded-md border border-zinc-700 bg-[#2C2C2C] has-[:checked]:border-white opacity-50 cursor-not-allowed">
+                <RadioGroupItem value="alipay" id="alipay" className="mr-4" disabled />
+                <img src="/zhifubao.svg" alt={t('billing.alipay')} className="h-6 w-6 mr-3" />
+                {t('billing.alipay')}（{t('billing.comingSoon')}）
               </Label>
             </RadioGroup>
           </div>
@@ -116,35 +157,51 @@ const BillingPage = () => {
               className="w-full bg-white text-black hover:bg-gray-200 rounded-md"
               onClick={handleRecharge}
             >
-              去支付
+              {t('billing.payButton')}
             </Button>
+            {paymentUrl && (
+              <div className="flex flex-col items-center space-y-4 p-4 bg-[#2C2C2C] rounded-md mt-4">
+                <h3 className="text-lg font-medium">{t('billing.scanQR')}</h3>
+                <QRCodeSVG value={paymentUrl} size={200} />
+                <p className="text-sm text-gray-400">{t('billing.paymentAmount')}: ¥{selectedAmount}</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-2"
+                  onClick={() => setPaymentUrl(null)}
+                >
+                  {t('billing.closeQR')}
+                </Button>
+              </div>
+            )}
             <div className="text-center">
-              <Button variant="link" className="text-gray-400 text-sm">查看价格</Button>
+              <Button variant="link" className="text-gray-400 text-sm">{t('billing.viewPrices')}</Button>
             </div>
           </div>
         </TabsContent>
         <TabsContent value="corporate" className="mt-6 border-t border-zinc-800 pt-6">
-          <p>请将款项汇至以下账户...</p>
+          <p>{t('billing.corporateInstructions')}</p>
         </TabsContent>
       </Tabs>
 
       <div className="space-y-4 border-t border-zinc-800 pt-6">
-        <h2 className="text-lg font-semibold">账单</h2>
+        <h2 className="text-lg font-semibold">{t('billing.bills')}</h2>
         <div className="rounded-lg border border-zinc-800 bg-[#1C1C1C]">
           <Table>
             <TableHeader>
-              <TableRow className="border-b-zinc-800 hover:bg-transparent">
-                <TableHead className="text-gray-400">订单编号</TableHead>
-                <TableHead className="text-gray-400">金额</TableHead>
-                <TableHead className="text-gray-400">创建时间</TableHead>
-              </TableRow>
-            </TableHeader>
+            <TableRow className="border-b-zinc-800 hover:bg-transparent">
+              <TableHead className="text-gray-400">{t('billing.orderId')}</TableHead>
+              <TableHead className="text-gray-400">{t('billing.amount')}</TableHead>
+              <TableHead className="text-gray-400">{t('billing.createdTime')}</TableHead>
+              <TableHead className="text-gray-400">{t('billing.status')}</TableHead>
+            </TableRow>
+          </TableHeader>
             <TableBody>
               {bills.map((bill) => (
                 <TableRow key={bill.id} className="border-0 hover:bg-zinc-900">
                   <TableCell className="font-mono py-4">{bill.id}</TableCell>
                   <TableCell className="py-4">¥{bill.amount.toFixed(2)}</TableCell>
                   <TableCell className="py-4">{new Date(bill.created_at).toLocaleString()}</TableCell>
+                  <TableCell className="py-4">{bill.status}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

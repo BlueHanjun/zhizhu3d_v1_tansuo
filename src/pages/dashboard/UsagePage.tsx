@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { useUsage } from "@/hooks/useUsage";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useState, useEffect } from "react";
 
 const CustomTooltip = ({ active, payload, label }: any) => {
@@ -17,6 +18,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const UsagePage = () => {
+  const { t } = useLanguage();
   const [selectedYear, setSelectedYear] = useState(2025);
   const [selectedMonth, setSelectedMonth] = useState(8);
   const { usageData, balance, loading, error, refetch } = useUsage();
@@ -41,11 +43,11 @@ const UsagePage = () => {
     return (
       <div className="space-y-8 text-white">
         <div>
-          <h1 className="text-3xl font-bold">用量信息</h1>
-          <p className="text-gray-400 mt-2">数据可能有1分钟延迟。</p>
+          <h1 className="text-3xl font-bold">{t('usage.title')}</h1>
+          <p className="text-gray-400 mt-2">{t('usage.description')}</p>
         </div>
         <div className="flex justify-center items-center h-32">
-          加载中...
+          {t('common.loading')}
         </div>
       </div>
     );
@@ -55,8 +57,8 @@ const UsagePage = () => {
     return (
       <div className="space-y-8 text-white">
         <div>
-          <h1 className="text-3xl font-bold">用量信息</h1>
-          <p className="text-gray-400 mt-2">数据可能有1分钟延迟。</p>
+          <h1 className="text-3xl font-bold">{t('usage.title')}</h1>
+          <p className="text-gray-400 mt-2">{t('usage.description')}</p>
         </div>
         <div className="flex justify-center items-center h-32 text-red-500">
           {error}
@@ -68,24 +70,24 @@ const UsagePage = () => {
   return (
     <div className="space-y-8 text-white">
       <div>
-        <h1 className="text-3xl font-bold">用量信息</h1>
-        <p className="text-gray-400 mt-2">数据可能有1分钟延迟。</p>
+        <h1 className="text-3xl font-bold">{t('usage.title')}</h1>
+        <p className="text-gray-400 mt-2">{t('usage.description')}</p>
       </div>
 
       <Card className="bg-[#1C1C1C] border-zinc-800">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-sm font-medium text-gray-300">充值余额</CardTitle>
+          <CardTitle className="text-sm font-medium text-gray-300">{t('usage.balance')}</CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between">
           <div className="text-3xl font-bold">¥ {balance?.amount?.toFixed(2) || '0.00'}</div>
-          <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-md" onClick={() => navigate('/dashboard/billing')}>去充值</Button>
+          <Button variant="outline" className="bg-transparent border-white text-white hover:bg-white hover:text-black rounded-md" onClick={() => navigate('/dashboard/billing')}>{t('usage.rechargeButton')}</Button>
         </CardContent>
       </Card>
 
       <Card className="bg-[#1C1C1C] border-zinc-800">
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle className="text-lg">用量明细</CardTitle>
+            <CardTitle className="text-lg">{t('usage.details')}</CardTitle>
             <div className="flex gap-2">
               <select 
                 value={selectedYear}
@@ -93,7 +95,7 @@ const UsagePage = () => {
                 className="bg-zinc-800 border-zinc-700 text-white rounded-md px-2 py-1"
               >
                 {[2023, 2024, 2025, 2026, 2027].map(year => (
-                  <option key={year} value={year}>{year}年</option>
+                  <option key={year} value={year}>{year}{t('usage.year')}</option>
                 ))}
               </select>
               <select 
@@ -102,7 +104,7 @@ const UsagePage = () => {
                 className="bg-zinc-800 border-zinc-700 text-white rounded-md px-2 py-1"
               >
                 {Array.from({ length: 12 }, (_, i) => i + 1).map(month => (
-                  <option key={month} value={month}>{month}月</option>
+                  <option key={month} value={month}>{month}{t('usage.month')}</option>
                 ))}
               </select>
             </div>
